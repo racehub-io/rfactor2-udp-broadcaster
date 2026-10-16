@@ -1,0 +1,42 @@
+# This is a basic workflow to help you get started with Actions
+
+name: build
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  push:
+    branches-ignore:
+      - '**' # this will ignore all branches - dont run currently -need specific build machine or CMake build  
+    #branches:
+    #- master
+  
+env:
+  CONFIGURATION: release
+  PLATFORM: x64
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: windows-2019
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v2
+
+    #- name: Install Build Tools
+    #  run: choco install microsoft-build-tools-2013
+      
+    - name: Add msbuild to PATH
+      uses: microsoft/setup-msbuild@v1.0.0
+      with:
+        vs-version: "[12.0,12.0]"
+
+    - name: Show path
+      run: $env:path
+      
+    - name: Build
+      run: msbuild -p:Configuration=release -p:Platform=x64 -toolsversion:12.0 -p:VCTargetsPath="C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V120"
